@@ -1,20 +1,9 @@
 package net.zsygfddsd.qujing.base.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 
-import com.alibaba.fastjson.JSON;
-import com.android.volley.Request;
-import com.android.volley.VolleyError;
-
-import net.zsygfddsd.qujing.bean.ComRespInfo;
-import net.zsygfddsd.qujing.bean.PageModel;
-import net.zsygfddsd.qujing.common.utils.DeviceUtils;
-import net.zsygfddsd.qujing.components.HttpVolley.RequestInfo;
-import net.zsygfddsd.qujing.components.HttpVolley.VolleyLoader;
-import net.zsygfddsd.qujing.components.HttpVolley.VolleyResponse;
+import net.zsygfddsd.qujing.components.httpLoader.RequestInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,17 +25,12 @@ public abstract class BaseRecyclerViewFragment<T> extends RecyclerViewFragment<T
     private RequestInfo reqInfo;
     private Boolean isShowDialog = true;
     private Boolean cancelable = false;
-    //是否已经在加载了，true则无法刷新或加载更多
-    private volatile Boolean isLoading = false;
 
-    private volatile boolean isClear = false;//是否清空列表所有数据
-    private List<T> items = new ArrayList<>();// list中当前最新页的数据
+    protected volatile boolean isClear = false;//是否清空列表所有数据
+    protected List<T> items = new ArrayList<>();// list中当前最新页的数据
 
     protected volatile int page = 0;//分页的页码
     protected volatile int pageSize = 10;//每页有多少条目
-
-    Handler handlerResult = new Handler();
-
 
     protected static Bundle data2Bundle(String reqTag, RequestInfo reqInfo, boolean isShowDialog,
                                         boolean cancelable, int itemLayoutId) {
@@ -87,140 +71,133 @@ public abstract class BaseRecyclerViewFragment<T> extends RecyclerViewFragment<T
 
     @Override
     public void onInitData() {
-        if (!isLoading) {
-            isLoading = true;
-            loadMore(reqInfo, isShowDialog, cancelable);
-        }
+
+        loadMore(reqInfo, isShowDialog, cancelable);
     }
 
     @Override
     public void onLoadMore() {
-        if (!isLoading) {
-            isLoading = true;
-            loadMore(reqInfo, false, true);
-        }
+        loadMore(reqInfo, false, true);
     }
 
     @Override
     public void onLoadRefresh() {
-        if (!isLoading) {
-            isLoading = true;
-            page = 0;
-            isClear = true;
-            loadMore(reqInfo, true, false);
-        }
+        page = 0;
+        isClear = true;
+        loadMore(reqInfo, true, false);
     }
 
     /**
      * 请求参数改变后，重新发送服务器请求，常用于重新排序或者筛选等功能
      */
     public void reLoadData(RequestInfo requestInfo) {
-        if (!isLoading) {
-            isLoading = true;
-            page = 0;
-            isClear = true;
-            reqInfo = requestInfo;
-            loadMore(reqInfo, false, false);
-        }
+        page = 0;
+        isClear = true;
+        reqInfo = requestInfo;
+        loadMore(reqInfo, false, false);
     }
 
     /**
      * 请求参数不变，重新发送服务器请求
      */
     public void reLoadData() {
-        if (!isLoading) {
-            isLoading = true;
-            page = 0;
-            isClear = true;
-            loadMore(reqInfo, false, false);
-        }
+        page = 0;
+        isClear = true;
+        loadMore(reqInfo, false, false);
     }
+
     //在这里处理分页操作,根据项目情况复写此方法
     protected void loadMore(RequestInfo reqInfo, boolean showDialog, boolean canCancel) {
         page++;
-        pageSize = 15;
-        StringBuilder strUrl = new StringBuilder(reqInfo.getUrl());
-        strUrl.append("/" + pageSize).append("/" + page);
-        loadData(Request.Method.GET,new RequestInfo(strUrl.toString()), showDialog, canCancel);
+        pageSize = 5;
+        loadData(reqInfo, pageSize + "", page + "", showDialog, canCancel);
     }
 
-    private void loadData(int requestMethod, RequestInfo reqInfo, boolean showDialog, boolean canCancel) {
-        if (DeviceUtils.isHasNetWork()) {
-        VolleyLoader.start(ct).request(requestMethod,reqTag, reqInfo, showDialog, canCancel, new VolleyResponse.strReqCallback() {
-            @Override
-            public void success(String response) {
-                handleResult(response);
-                completeRefreshing();
-                isLoading = false;
-            }
+    //    private void loadData(int requestMethod, RequestInfo reqInfo, boolean showDialog, boolean canCancel) {
+    //        if (DeviceUtils.isHasNetWork()) {
+    //        VolleyLoader.start(ct).request(requestMethod,reqTag, reqInfo, showDialog, canCancel, new VolleyResponse.strReqCallback() {
+    //            @Override
+    //            public void success(String response) {
+    //                handleResult(response);
+    //                completeRefreshing();
+    //                isLoading = false;
+    //            }
+    //
+    //            @Override
+    //            public void error(VolleyError error) {
+    //                completeRefreshing();
+    //                isLoading = false;
+    //
+    //            }
+    //        });
+    //    }else{
+    //       if(isRefreshing()){
+    //                completeRefreshing();
+    //            }
+    //            showToast("请检查网络连接");
+    //    }
+    //    }
 
-            @Override
-            public void error(VolleyError error) {
-                completeRefreshing();
-                isLoading = false;
-
-            }
-        });
-    }else{
-       if(isRefreshing()){
-                completeRefreshing();
-            }
-            showToast("请检查网络连接"); 
+    public void loadData(RequestInfo reqInfo, String pageSize, String page, boolean showDialog, boolean canCancel) {
+        //        if (DeviceUtils.isHasNetWork()) {
+        //            String type = reqInfo.getBodyParams().get("type");
+        //            Call<ComRespInfo<List<T>>> call = HttpLoader.getInstance().welfareHttp().getWelfareList(type, pageSize, page);
+        //            call.enqueue(new Callback<ComRespInfo<List<T>>>() {
+        //                @Override
+        //                public void onResponse(Call<ComRespInfo<List<T>>> call, Response<ComRespInfo<List<T>>> response) {
+        //                    if (response.isSuccessful()) {
+        //                        items.clear();
+        //                        items = response.body().getResults();
+        //                    }
+        //                }
+        //
+        //                @Override
+        //                public void onFailure(Call<ComRespInfo<List<T>>> call, Throwable t) {
+        //
+        //                }
+        //            });
+        //        } else {
+        //            if (isRefreshing()) {
+        //                completeRefreshing();
+        //            }
+        //            showToast("请检查网络连接");
+        //        }
     }
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == getActivity().RESULT_OK) {
-
-            switch (requestCode) {
-                case REQUEST_CODE_TOKEN_INABLE:
-                    reLoadData();
-                    break;
-                default:
-                    break;
-            }
-
-        }
-
-    }
 
 
+    //    private void handleResult(final String response) {
+    //        handlerResult.post(new Runnable() {
+    //            @Override
+    //            public void run() {
+    //                ComRespInfo comRespInfo = JSON.parseObject(response, ComRespInfo.class);
+    //                PageModel pageModel = new PageModel();
+    //                pageModel.setList(comRespInfo.getResults());
+    //                pageModel.setHasNext(true);
+    //
+    //                setHasNextPage(pageModel.getHasNext());
+    //                changeFooterText(!pageModel.getHasNext());
+    //                items.clear();
+    //                items = handleData(pageModel);
+    //                if (isClear) {
+    //                    itemDatas.clear();
+    //                    isClear = false;
+    //                }
+    //                itemDatas.addAll(items);
+    //                updateData();
+    //                if (itemDatas.size() == 0) {
+    //                    // TODO: 16/1/6  在此显示无数据时的图片
+    //                }
+    //            }
+    //        });
 
-    private void handleResult(final String response) {
-        handlerResult.post(new Runnable() {
-            @Override
-            public void run() {
-                ComRespInfo comRespInfo = JSON.parseObject(response, ComRespInfo.class);
-                PageModel pageModel = new PageModel();
-                pageModel.setList(comRespInfo.getResults());
-                pageModel.setHasNext(true);
-
-                setHasNextPage(pageModel.getHasNext());
-                changeFooterText(!pageModel.getHasNext());
-                items.clear();
-                items = handleData(pageModel);
-                if (isClear) {
-                    itemDatas.clear();
-                    isClear = false;
-                }
-                itemDatas.addAll(items);
-                updateData();
-                if (itemDatas.size() == 0) {
-                    // TODO: 16/1/6  在此显示无数据时的图片
-                }
-            }
-        });
-
-    }
+    //    }
 
     /**
      * 得到子类model的class
      *
      * @return Class
      */
-    public abstract List<T> handleData(PageModel pageModel);
+    //    public abstract List<T> handleData(PageModel pageModel);
 }
 
 

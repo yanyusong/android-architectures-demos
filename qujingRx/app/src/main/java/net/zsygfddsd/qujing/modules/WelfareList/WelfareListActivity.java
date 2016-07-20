@@ -6,9 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.FrameLayout;
 
 import net.zsygfddsd.qujing.R;
-import net.zsygfddsd.qujing.common.URLs;
 import net.zsygfddsd.qujing.common.utils.FragUtils;
-import net.zsygfddsd.qujing.components.HttpVolley.RequestInfo;
+import net.zsygfddsd.qujing.components.httpLoader.RequestInfo;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -21,6 +20,7 @@ public class WelfareListActivity extends AppCompatActivity {
     FrameLayout mainFrame;
 
     private FragUtils fragUtils;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,7 +32,9 @@ public class WelfareListActivity extends AppCompatActivity {
                 Fragment tempFrag = null;
                 if (fragTag == Tag_WelfareListFragment) {
                     WelfareListFragment welfareListFragment = new WelfareListFragment();
-                    welfareListFragment.init(Tag_WelfareListFragment,new RequestInfo(URLs.GET_LIST_WELFARE),true,false,R.layout.item_welfare);
+                    RequestInfo requestInfo = new RequestInfo();
+                    requestInfo.addBodyParams("type", "福利");
+                    welfareListFragment.init(Tag_WelfareListFragment, requestInfo, true, false, R.layout.item_welfare);
                     tempFrag = welfareListFragment;
                 }
 

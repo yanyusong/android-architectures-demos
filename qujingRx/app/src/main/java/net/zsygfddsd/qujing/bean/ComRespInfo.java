@@ -3,9 +3,9 @@ package net.zsygfddsd.qujing.bean;
 /**
  * Created by mac on 16/3/3.
  */
-public class ComRespInfo {
+public class ComRespInfo<T> {
     private boolean error;
-    private String results;
+    private T results;
 
     public boolean isError() {
         return error;
@@ -15,11 +15,11 @@ public class ComRespInfo {
         this.error = error;
     }
 
-    public String getResults() {
+    public T getResults() {
         return results;
     }
 
-    public void setResults(String results) {
+    public void setResults(T results) {
         this.results = results;
     }
 }

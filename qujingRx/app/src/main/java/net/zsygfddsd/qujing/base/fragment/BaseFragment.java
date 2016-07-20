@@ -9,11 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import net.zsygfddsd.qujing.common.utils.DeviceUtils;
-import net.zsygfddsd.qujing.components.HttpVolley.RequestInfo;
-import net.zsygfddsd.qujing.components.HttpVolley.VolleyLoader;
-import net.zsygfddsd.qujing.components.HttpVolley.VolleyResponse;
-
 
 /**
  * Created by mac on 16/3/1.
@@ -43,28 +38,6 @@ public abstract class BaseFragment extends Fragment {
     public abstract View initView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState);
 
     public abstract void initData(Bundle savedInstanceState);
-
-    //*************与服务器交互封装start************//
-
-    public void loadData(String reqTag, RequestInfo reqInfo, boolean isShowDialog,
-                         boolean cancelable, VolleyResponse.strReqCallback callback){
-        if (DeviceUtils.isHasNetWork()) {
-            //            reqInfo.getBodyParams().put(); //添加公共参数
-            VolleyLoader.start(ct).post(reqTag, reqInfo, isShowDialog, cancelable, callback);
-        } else {
-            showToast("请检查网络连接");
-        }
-    }
-
-    public void getLoadData(String reqTag, RequestInfo reqInfo, boolean isShowDialog,
-                            boolean cancelable, VolleyResponse.strReqCallback callback){
-        if (DeviceUtils.isHasNetWork()) {
-            //            reqInfo.getBodyParams().put(); //添加公共参数
-            VolleyLoader.start(ct).get(reqTag, reqInfo, isShowDialog, cancelable, callback);
-        } else {
-            showToast("请检查网络连接");
-        }
-    }
 
     public void showToast(String content) {
         Toast.makeText(ct, content, Toast.LENGTH_SHORT).show();

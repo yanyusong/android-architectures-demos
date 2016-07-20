@@ -1,4 +1,4 @@
-package net.zsygfddsd.qujing.components.HttpVolley;
+package net.zsygfddsd.qujing.components.httpLoader;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -14,6 +14,11 @@ public class RequestInfo implements Serializable{
     private Map<String, String> headers;
 
     private Map<String, String> bodyParams;
+
+    public RequestInfo() {
+        this.headers = new HashMap<>();
+        this.bodyParams = new HashMap<>();
+    }
 
     public RequestInfo(String url) {
         this.url = url;

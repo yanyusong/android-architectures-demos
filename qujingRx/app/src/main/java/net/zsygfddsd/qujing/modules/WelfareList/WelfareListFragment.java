@@ -6,29 +6,72 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.alibaba.fastjson.JSON;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 
 import net.zsygfddsd.qujing.R;
 import net.zsygfddsd.qujing.base.adapter.GeneralRecyclerViewHolder;
 import net.zsygfddsd.qujing.base.fragment.BaseRecyclerViewFragment;
-import net.zsygfddsd.qujing.bean.PageModel;
+import net.zsygfddsd.qujing.bean.ComRespInfo;
 import net.zsygfddsd.qujing.bean.Welfare;
+import net.zsygfddsd.qujing.common.utils.DeviceUtils;
+import net.zsygfddsd.qujing.components.httpLoader.HttpLoader;
+import net.zsygfddsd.qujing.components.httpLoader.RequestInfo;
 
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by mac on 16/5/12.
  */
 public class WelfareListFragment extends BaseRecyclerViewFragment<Welfare> {
-
-
-
     @Override
-    public List<Welfare> handleData(PageModel pageModel) {
-        List<Welfare> welfareList = JSON.parseArray(pageModel.getList(), Welfare.class);
-        return welfareList;
+    public void loadData(RequestInfo reqInfo, String pageSize, String page, boolean showDialog, boolean canCancel) {
+        if (DeviceUtils.isHasNetWork()) {
+            String type = reqInfo.getBodyParams().get("type");
+            Call<ComRespInfo<List<Welfare>>> call = HttpLoader.getInstance().welfareHttp().getWelfareList(type, pageSize, page);
+            call.enqueue(new Callback<ComRespInfo<List<Welfare>>>() {
+                @Override
+                public void onResponse(Call<ComRespInfo<List<Welfare>>> call, Response<ComRespInfo<List<Welfare>>> response) {
+                    if (response.isSuccessful()) {
+                        setHasNextPage(true);
+                        items.clear();
+                        items = response.body().getResults();
+                        if (isClear) {
+                            itemDatas.clear();
+                            isClear = false;
+                        }
+                        itemDatas.addAll(items);
+                        updateData();
+                        if (itemDatas.size() == 0) {
+                            // TODO: 16/1/6  在此显示无数据时的图片
+                        }
+                    }else{
+                        showToast("获取失败!");
+                    }
+
+                    if (isRefreshing()) {
+                        completeRefreshing();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ComRespInfo<List<Welfare>>> call, Throwable t) {
+                    showToast("获取失败!");
+                    if (isRefreshing()) {
+                        completeRefreshing();
+                    }
+                }
+            });
+        } else {
+            if (isRefreshing()) {
+                completeRefreshing();
+            }
+            showToast("请检查网络连接");
+        }
     }
 
     @Override

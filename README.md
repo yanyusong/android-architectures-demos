@@ -1,5 +1,6 @@
 # android-architectures-demos
 a demo to learn the android major architectures
 
-* qujing :Volley
-* qujingRetrofit:使用了Retrofit2
+* qujing : Volley
+* qujingRetrofit : Retrofit2
+* qujingRx : Retrofit 2 + RxJava + RxAndroid + RxLifecycle 

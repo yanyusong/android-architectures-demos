@@ -2,8 +2,9 @@ package net.zsygfddsd.qujing.modules.WelfareList;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.widget.FrameLayout;
+
+import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 
 import net.zsygfddsd.qujing.R;
 import net.zsygfddsd.qujing.common.utils.FragUtils;
@@ -12,7 +13,7 @@ import net.zsygfddsd.qujing.components.httpLoader.RequestInfo;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class WelfareListActivity extends AppCompatActivity {
+public class WelfareListActivity extends RxAppCompatActivity {
 
     private static String Tag_WelfareListFragment = "WelfareListFragment";
 

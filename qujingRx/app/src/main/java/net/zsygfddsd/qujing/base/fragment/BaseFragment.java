@@ -3,17 +3,18 @@ package net.zsygfddsd.qujing.base.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.trello.rxlifecycle.components.support.RxFragment;
+
 
 /**
  * Created by mac on 16/3/1.
  */
-public abstract class BaseFragment extends Fragment {
+public abstract class BaseFragment extends RxFragment {
 
     protected Context ct;
 

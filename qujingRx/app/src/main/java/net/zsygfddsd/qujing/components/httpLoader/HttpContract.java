@@ -5,6 +5,6 @@ package net.zsygfddsd.qujing.components.httpLoader;
  */
 public interface HttpContract {
 
-    WelfareHttp welfareHttp();
+    WelfareService welfareHttp();
 
 }

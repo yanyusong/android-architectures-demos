@@ -5,18 +5,18 @@ import net.zsygfddsd.qujing.bean.Welfare;
 
 import java.util.List;
 
-import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
+import rx.Observable;
 
 /**
  * Created by mac on 16/7/19.
  */
-public interface WelfareHttp {
+public interface WelfareService {
 
     String BaseUrl = "http://gank.io/api/";
 
     @GET("data/{type}/{pageSize}/{page}")
-    Call<ComRespInfo<List<Welfare>>> getWelfareList(@Path("type") String type, @Path("pageSize") String pageSize, @Path("page") String page);
+    Observable<ComRespInfo<List<Welfare>>> getWelfareList(@Path("type") String type, @Path("pageSize") String pageSize, @Path("page") String page);
 
 }

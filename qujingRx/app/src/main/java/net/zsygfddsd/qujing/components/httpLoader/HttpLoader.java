@@ -4,6 +4,7 @@ import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
@@ -11,13 +12,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public class HttpLoader implements HttpContract {
 
-    private static final HttpLoader instance = new HttpLoader();
-
     private static final int DEFAULT_TIMEOUT = 5;
 
     private Retrofit retrofit;
 
-    private WelfareHttp welfareHttp;
+    private WelfareService welfareHttp;
 
 
     private HttpLoader() {
@@ -28,20 +27,26 @@ public class HttpLoader implements HttpContract {
         retrofit = new Retrofit.Builder()
                 .client(builder.build())
                 .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 //                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .baseUrl(WelfareHttp.BaseUrl)
+                .baseUrl(WelfareService.BaseUrl)
                 .build();
     }
 
     public static HttpLoader getInstance() {
-
-        return instance;
+        return HttpLoaderHolder.instance;
     }
 
+    //设计模式推荐的内部静态类实现的单例模式
+    private static class HttpLoaderHolder {
+        private static final HttpLoader instance = new HttpLoader();
+    }
+
+
     @Override
-    public WelfareHttp welfareHttp() {
-        if (welfareHttp==null) {
-            welfareHttp = retrofit.create(WelfareHttp.class);
+    public WelfareService welfareHttp() {
+        if (welfareHttp == null) {
+            welfareHttp = retrofit.create(WelfareService.class);
         }
         return welfareHttp;
     }

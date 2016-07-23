@@ -2,4 +2,4 @@
 a demo to learn the android major architectures
 
 * qujing :Volley
-* qujingRx:使用了Retrofit2
+* qujingRetrofit:使用了Retrofit2

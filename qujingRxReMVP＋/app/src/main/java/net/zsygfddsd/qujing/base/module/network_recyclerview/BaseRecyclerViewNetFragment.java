@@ -1,10 +1,10 @@
 package net.zsygfddsd.qujing.base.module.network_recyclerview;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.CallSuper;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -20,15 +20,13 @@ import net.zsygfddsd.qujing.base.adapter.multirecycler.OnBind;
 import net.zsygfddsd.qujing.base.module.network.BaseNetFragment;
 import net.zsygfddsd.qujing.common.widgets.DividerGridItemDecoration;
 
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by mac on 15/12/19.
  * T: 是IBaseRecyclerViewPresenter
  * D: 是item的bean
  */
-public abstract class BaseRecyclerViewNetFragment<T extends BasePageContract.IBaseRecyclerViewPresenter, D> extends BaseNetFragment<T> implements BasePageContract.IBaseRecyclerView<T, D>, SwipeRefreshLayout.OnRefreshListener {
+public abstract class BaseRecyclerViewNetFragment<T extends BasePageContract.IBaseRecyclerViewPresenter> extends BaseNetFragment<T> implements BasePageContract.IBaseRecyclerView<T>, SwipeRefreshLayout.OnRefreshListener {
 
     protected static final String ITEM_LAYOUT_ID = "itemLayoutId";
 
@@ -36,8 +34,7 @@ public abstract class BaseRecyclerViewNetFragment<T extends BasePageContract.IBa
     protected RecyclerView recyclerView;
     protected MultiRecyclerAdapter adapter;
     private T mPresenter;
-    public List<D> itemDatas = new ArrayList<>();
-    private ItemEntityList itemEntityList = new ItemEntityList();
+    protected ItemEntityList itemEntityList = new ItemEntityList();
 
     protected int itemLayoutId = android.R.layout.simple_list_item_1;// item的布局id,默认是只有一个textview
     protected int bottomItemLayoutId = android.R.layout.simple_list_item_1;// item的布局id,默认是只有一个textview
@@ -46,7 +43,9 @@ public abstract class BaseRecyclerViewNetFragment<T extends BasePageContract.IBa
 
     private boolean canLoadMore = true;
     private int loadOffset = 2;//设置滚动到倒数第几个时开始加载下一页，默认是倒数第2个
-    private GridLayoutManager layoutManager;
+    private LinearLayoutManager layoutManager;
+
+    private RecyclerView.ItemDecoration itemDecoration = null;
 
     protected Bundle data2Bundle(int itemLayoutId) {
         Bundle bundle = new Bundle();
@@ -89,45 +88,37 @@ public abstract class BaseRecyclerViewNetFragment<T extends BasePageContract.IBa
         //        refreshView.setColorSchemeResources();
         //        recyclerView.setHasFixedSize(true);//如果item大小不会因为内容变化而变化，则设为true，提高绘制效率
         //                recyclerView.setLayoutManager(new LinearLayoutManager(ct, LinearLayout.VERTICAL, false));
-        layoutManager = new GridLayoutManager(ct, 4);
+        layoutManager = new LinearLayoutManager(ct);
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.addItemDecoration(new DividerGridItemDecoration(ct, 1, 0xFF000000) {
-            @Override
-            public boolean[] getItemSidesIsHaveOffsets(int itemPosition) {
 
-                boolean[] temp = {true, true, true, true};
+        RecyclerView.ItemDecoration divider = getItemDecoration(ct);
 
-                if (itemPosition == itemEntityList.getItemCount() - 1) {
-                    temp[0] = false;
-                    temp[1] = false;
-                    temp[2] = false;
-                    temp[3] = false;
-                } else {
-                    switch (itemPosition % 4) {
-                        case 0:
-                            ;
-                        case 1:
-                            ;
-                        case 2:
-                            temp[0] = false;
-                            temp[3] = false;
-                            break;
-                        case 3:
-                            temp[0] = false;
-                            temp[2] = false;
-                            temp[3] = false;
-                            break;
-                        default:
-                            break;
-                    }
+        if (divider == null) {
+            itemDecoration = new DividerGridItemDecoration(ct, 1, 0xffEBEBF1) {
+                @Override
+                public boolean[] getItemSidesIsHaveOffsets(int itemPosition) {
+
+                    boolean[] temp = {false, false, false, true};
+
+                    return temp;
                 }
-
-                return temp;
-            }
-        });
+            }.configLastItemShowDivider(false);
+        } else {
+            itemDecoration = divider;
+        }
+        recyclerView.addItemDecoration(itemDecoration);
         initRecyclerView(recyclerView);
         refreshView.setOnRefreshListener(this);
         return view;
+    }
+
+    protected RecyclerView.ItemDecoration getItemDecoration(Context ct) {
+
+        return null;
+    }
+
+    public void setRefreshEnable(boolean enable) {
+        refreshView.setEnabled(enable);
     }
 
     private void initData(Bundle savedInstanceState) {
@@ -141,25 +132,21 @@ public abstract class BaseRecyclerViewNetFragment<T extends BasePageContract.IBa
                 .addOnBind(bottomItemLayoutId, new OnBind() {
                     @Override
                     public void onBindChildViewData(GeneralRecyclerViewHolder holder, Object itemData, int position) {
-                        if (position + 1 > PageConfig.PageSize) {
-                            if (hasNextPage) {
-                                holder.setText(R.id.item_bottom_text, "正在加载中...");
-                            } else {
-                                holder.setText(R.id.item_bottom_text, "您已滚动到最底部了");
-                            }
+                        if (hasNextPage) {
+                            holder.setText(R.id.item_bottom_text, "正在加载中...");
                         } else {
-                            holder.setText(R.id.item_bottom_text, "");
+                            holder.setText(R.id.item_bottom_text, "您已滚动到最底部了");
                         }
                     }
                 });
         adapter = new MultiRecyclerAdapter(ct, itemEntityList);
-        layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-            @Override
-            public int getSpanSize(int position) {
-                int viewType = adapter.getItemViewType(position);
-                return viewType == itemLayoutId ? 1 : 4;
-            }
-        });
+        //        layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+        //            @Override
+        //            public int getSpanSize(int position) {
+        //                int viewType = adapter.getItemViewType(position);
+        //                return viewType == itemLayoutId ? 1 : 4;
+        //            }
+        //        });
         recyclerView.setAdapter(adapter);
 
         canLoadMore = getCanLoadMore();
@@ -175,20 +162,6 @@ public abstract class BaseRecyclerViewNetFragment<T extends BasePageContract.IBa
                                                  @Override
                                                  public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                                                      super.onScrollStateChanged(recyclerView, newState);
-                                                     //                                                     if (!(layoutManager instanceof StaggeredGridLayoutManager)) {
-                                                     //                                                         lastVisibleItemPos[0] = ((LinearLayoutManager) layoutManager).findLastCompletelyVisibleItemPosition();
-                                                     //                                                     }
-                                                     //                                                     int totalCount = layoutManager.getItemCount();
-                                                     //                                                     if (newState == RecyclerView.SCROLL_STATE_IDLE && lastVisibleItemPos[0] == totalCount - 1) {
-                                                     //                                                         if (isHasNextPage()) {
-                                                     //                                                             footerData.put(Tag_footer_text, "正在加载中...");
-                                                     //                                                             adapter.notifyFooterDataChanged();
-                                                     //                                                             onLoadMore();
-                                                     //                                                         } else {
-                                                     //                                                             footerData.put(Tag_footer_text, "您已滚动到最底部了");
-                                                     //                                                             adapter.notifyFooterDataChanged();
-                                                     //                                                         }
-                                                     //                                                     }
                                                  }
 
                                                  @Override

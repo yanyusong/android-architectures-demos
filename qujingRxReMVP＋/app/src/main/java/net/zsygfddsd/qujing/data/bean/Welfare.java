@@ -1,4 +1,4 @@
-package net.zsygfddsd.qujing.bean;
+package net.zsygfddsd.qujing.data.bean;
 
 /**
  * Created by mac on 16/5/12.

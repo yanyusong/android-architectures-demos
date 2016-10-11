@@ -10,13 +10,15 @@ import net.zsygfddsd.qujing.base.module.network.BaseNetContract;
  */
 public class BasePageContract {
 
-    public interface IBaseRecyclerView<T extends IBaseRecyclerViewPresenter, D> extends BaseNetContract.IBaseNetView<T> {
+    public interface IBaseRecyclerView<T extends IBaseRecyclerViewPresenter> extends BaseNetContract.IBaseNetView<T> {
 
         void setHasNextPage(boolean hasNext);
 
         int getItemLayoutId();
 
         int getBottomViewLayoutId();
+
+        void setRefreshEnable(boolean enable);
 
         ItemEntityList getItemEntityList();
 

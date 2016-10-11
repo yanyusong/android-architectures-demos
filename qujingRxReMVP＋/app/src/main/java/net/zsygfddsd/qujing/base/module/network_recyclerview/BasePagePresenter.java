@@ -5,15 +5,16 @@ import android.content.Context;
 
 import net.zsygfddsd.qujing.base.adapter.multirecycler.ItemEntityList;
 import net.zsygfddsd.qujing.base.module.network.BaseNetPresenter;
-import net.zsygfddsd.qujing.bean.ComRespInfo;
-import net.zsygfddsd.qujing.components.httpLoader.ObservableFactory;
-import net.zsygfddsd.qujing.components.httpLoader.Subscriber.NetCheckerSubscriber;
-import net.zsygfddsd.qujing.components.httpLoader.transformer.EmitBeforeAndAfterTransformer;
+import net.zsygfddsd.qujing.data.bean.ComRespInfo;
+import net.zsygfddsd.qujing.common.helpers.ObservableFactory;
+import net.zsygfddsd.qujing.common.helpers.Subscriber.NetCheckerSubscriber;
+import net.zsygfddsd.qujing.common.helpers.transformer.EmitBeforeAndAfterTransformer;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import rx.Observable;
+
 
 /**
  * Created by mac on 16/6/11.
@@ -22,15 +23,16 @@ import rx.Observable;
  */
 public abstract class BasePagePresenter<DATA, D> extends BaseNetPresenter implements BasePageContract.IBaseRecyclerViewPresenter {
 
-    private Context context;
+    protected Context context;
     private BasePageContract.IBaseRecyclerView mView;
 
-    private int page = 1;
-    private int pageSize = PageConfig.PageSize;
-    private volatile boolean isClear = false;//是否清空列表所有数据
-    private volatile List<D> items = new ArrayList<>();// list中当前最新页的数据
+    protected int page = 1;
+    protected int pageSize = PageConfig.PageSize;
+    protected volatile boolean isClear = false;//是否清空列表所有数据
+    protected volatile List<D> items = new ArrayList<>();// list中当前最新页的数据
+    protected volatile List<D> allItems = new ArrayList<>();// list中当前所有的数据
 
-    private DefaultLoadingDialogShowConfig defaultLoadingShowConfig;
+    private DefaultLoadingDialogShowConfig defaultLoadingShowConfig = new DefaultLoadingDialogShowConfig(false, true, true);
 
     public BasePagePresenter(Context context, BasePageContract.IBaseRecyclerView mView) {
         super(mView);
@@ -45,7 +47,7 @@ public abstract class BasePagePresenter<DATA, D> extends BaseNetPresenter implem
     }
 
     public NetCheckerSubscriber getDefaultSubscriber() {
-        return new NetCheckerSubscriber<ComRespInfo<DATA>>(context, mView) {
+        return new NetCheckerSubscriber<DATA>(context, mView) {
 
             @Override
             public void onCompleted() {
@@ -60,6 +62,7 @@ public abstract class BasePagePresenter<DATA, D> extends BaseNetPresenter implem
 
             @Override
             public void onNext(ComRespInfo<DATA> dataComRespInfo) {
+                super.onNext(dataComRespInfo);
                 if (!dataComRespInfo.isError()) {
                     ItemEntityList itemEntityList = mView.getItemEntityList();
                     boolean hasnext = getIsHasNextFromResponse(dataComRespInfo.getResults());
@@ -69,14 +72,22 @@ public abstract class BasePagePresenter<DATA, D> extends BaseNetPresenter implem
 
                     if (isClear) {
                         itemEntityList.clearItemDatas();
-                        itemEntityList.addItem(mView.getBottomViewLayoutId(), "bottomText");
+                        allItems.clear();
                         isClear = false;
                     }
-                    itemEntityList.addItems(itemEntityList.getItemCount() - 1, mView.getItemLayoutId(), items);
-                    mView.updateData();
-                    if (itemEntityList.getItemCount() - 1 == 0) {
+                    if (itemEntityList.getItemCount() >= pageSize) {
+                        itemEntityList.remove(itemEntityList.getItemCount() - 1);
+                    }
+                    itemEntityList.addItems(mView.getItemLayoutId(), items);
+                    allItems.addAll(items);
+                    if (itemEntityList.getItemCount() >= pageSize) {
+                        itemEntityList.addItem(mView.getBottomViewLayoutId(), "bottomText");
+                    }
+                    if (itemEntityList.getItemCount() == 0) {
                         mView.showEmptyPage();
                     }
+                    mView.updateData();
+
                 } else {
                     mView.showLoadingError();
                 }
@@ -86,6 +97,10 @@ public abstract class BasePagePresenter<DATA, D> extends BaseNetPresenter implem
 
     public DefaultLoadingDialogShowConfig getDefaultLoadingShowConfig() {
         return new DefaultLoadingDialogShowConfig(false, true, true);
+    }
+
+    public List<D> getCurAllItems() {
+        return allItems;
     }
 
     public abstract boolean getIsHasNextFromResponse(DATA result);
@@ -119,7 +134,7 @@ public abstract class BasePagePresenter<DATA, D> extends BaseNetPresenter implem
     public void onLoadRefresh() {
         page = 1;
         isClear = true;
-        loadData(getRequestObservable(page, pageSize), defaultLoadingShowConfig.isRefreshShow, false);
+        loadData(getRequestObservable(page, pageSize), defaultLoadingShowConfig.isRefreshShow, true);
     }
 
     class DefaultLoadingDialogShowConfig {

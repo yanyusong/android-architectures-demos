@@ -8,7 +8,12 @@ import net.zsygfddsd.qujing.base.module.base.BaseContract;
  */
 public class BaseNetContract {
 
-    public interface IBaseNetView<T extends BaseContract.IBasePresenter> extends BaseContract.IBaseView<T> {
+    public interface IBaseNetView<T extends BaseContract.IBasePresenter> extends BaseContract.IBaseView<T>, INetView {
+
+
+    }
+
+    public interface INetView {
 
         interface ILoadingCancelListener {
             void onLoadCancelListener();
@@ -23,6 +28,8 @@ public class BaseNetContract {
         void showEmptyPage();
 
         void showNoNetWork();
+
+        void showToLoginDialog();
 
     }
 

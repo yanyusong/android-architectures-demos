@@ -1,7 +1,7 @@
-package net.zsygfddsd.qujing.components.httpLoader;
+package net.zsygfddsd.qujing.data.http;
 
-import net.zsygfddsd.qujing.bean.ComRespInfo;
-import net.zsygfddsd.qujing.bean.Welfare;
+import net.zsygfddsd.qujing.data.bean.ComRespInfo;
+import net.zsygfddsd.qujing.data.bean.Welfare;
 
 import java.util.List;
 
@@ -13,8 +13,6 @@ import rx.Observable;
  * Created by mac on 16/7/19.
  */
 public interface WelfareService {
-
-    String BaseUrl = "http://gank.io/api/";
 
     @GET("data/{type}/{pageSize}/{page}")
     Observable<ComRespInfo<List<Welfare>>> getWelfareList(@Path("type") String type, @Path("pageSize") String pageSize, @Path("page") String page);

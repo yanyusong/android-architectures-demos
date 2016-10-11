@@ -31,7 +31,9 @@ public class MultiRecyclerAdapter extends RecyclerView.Adapter<GeneralRecyclerVi
 
     @Override
     public void onBindViewHolder(GeneralRecyclerViewHolder holder, int position) {
-        itemList.getOnBind(position).onBindChildViewData(holder, itemList.getItemData(position), position);
+        if (itemList.getOnBind(position) != null) {
+            itemList.getOnBind(position).onBindChildViewData(holder, itemList.getItemData(position), position);
+        }
     }
 
     @Override

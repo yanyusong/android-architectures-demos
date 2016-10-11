@@ -16,6 +16,7 @@ public class BaseFragment<T extends BaseContract.IBasePresenter> extends RxFragm
 
     public Context ct;
     private BaseContract.IBasePresenter mPresenter;
+    private Toast toast;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -23,8 +24,14 @@ public class BaseFragment<T extends BaseContract.IBasePresenter> extends RxFragm
         ct = getActivity();
     }
 
+    @Override
     public void showToast(String content) {
-        Toast.makeText(ct, content, Toast.LENGTH_SHORT).show();
+        if (toast == null) {
+            toast = Toast.makeText(ct, content, Toast.LENGTH_SHORT);
+        } else {
+            toast.setText(content);
+        }
+        toast.show();
     }
 
     @CallSuper
@@ -37,4 +44,25 @@ public class BaseFragment<T extends BaseContract.IBasePresenter> extends RxFragm
     public RxFragment getRxView() {
         return this;
     }
+
+//    @Override
+//    public void showRationaleDialog(String message, final PermissionRequest request) {
+//        new AlertDialog.Builder(ct)
+//                .setPositiveButton("允许", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(@NonNull DialogInterface dialog, int which) {
+//                        request.proceed();
+//                    }
+//                })
+//                .setNegativeButton("拒绝", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(@NonNull DialogInterface dialog, int which) {
+//                        request.cancel();
+//                    }
+//                })
+//                .setCancelable(false)
+//                .setMessage(message)
+//                .show();
+//    }
+
 }

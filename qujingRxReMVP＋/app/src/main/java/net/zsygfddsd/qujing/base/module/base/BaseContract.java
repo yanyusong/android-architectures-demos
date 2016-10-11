@@ -7,11 +7,13 @@ import com.trello.rxlifecycle.components.support.RxFragment;
  */
 public class BaseContract {
 
-    public interface IBaseView<T extends IBasePresenter> {
+    public interface IBaseView<T extends IBasePresenter>{
 
         void setPresenter(T presenter);
 
         RxFragment getRxView();
+
+        void showToast(String content);
 
     }
 

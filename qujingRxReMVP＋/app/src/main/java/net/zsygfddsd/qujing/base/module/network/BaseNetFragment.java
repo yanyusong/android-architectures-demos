@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.support.annotation.CallSuper;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 
 import net.zsygfddsd.qujing.base.module.base.BaseContract;
 import net.zsygfddsd.qujing.base.module.base.BaseFragment;
@@ -16,6 +17,7 @@ public class BaseNetFragment<T extends BaseContract.IBasePresenter> extends Base
 
     public ProgressDialog pDialog;
     private T mPresenter;
+    private AlertDialog toLoginDialog;
 
     @Override
     public void showLoading(boolean cancelable, @Nullable final ILoadingCancelListener listener) {
@@ -56,17 +58,35 @@ public class BaseNetFragment<T extends BaseContract.IBasePresenter> extends Base
         showToast("网络连接失败");
     }
 
+    @Override
+    public void showToLoginDialog() {
+        //        if (toLoginDialog == null) {
+        //            toLoginDialog = new AlertDialog.Builder(ct)
+        //                    .setTitle("重新登录")
+        //                    .setMessage("登录过期,请重新登录")
+        //                    .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+        //                        @Override
+        //                        public void onClick(DialogInterface dialog, int which) {
+        //                            dialog.dismiss();
+        //                        }
+        //                    })
+        //                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+        //                        @Override
+        //                        public void onClick(DialogInterface dialog, int which) {
+        //                            Intent toLogin = new Intent(getActivity(), LoginActivity.class);
+        //                            getActivity().startActivity(toLogin);
+        //                            dialog.dismiss();
+        //                        }
+        //                    }).create();
+        //        }
+        //        toLoginDialog.show();
+    }
+
     @CallSuper
     @Override
     public void setPresenter(T presenter) {
         super.setPresenter(presenter);
         this.mPresenter = presenter;
-    }
-
-    @Override
-    public void onDestroy() {
-        mPresenter.destroy();
-        super.onDestroy();
     }
 
 

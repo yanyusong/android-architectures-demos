@@ -1,4 +1,4 @@
-package net.zsygfddsd.qujing.components.httpLoader;
+package net.zsygfddsd.qujing.data.http;
 
 /**
  * Created by mac on 16/7/19.

@@ -59,6 +59,7 @@ public class ItemEntityList {
         clearItemDatas();
         clearOnBinds();
     }
+
     public void clearItemDatas() {
         mItems.clear();
         mItemLayoutIds.clear();
@@ -67,6 +68,12 @@ public class ItemEntityList {
     public void clearOnBinds() {
         mOnBinds.clear();
     }
+
+    public void replace(int position, int itemLayoutId, Object itemData) {
+        remove(position);
+        addItem(position, itemLayoutId, itemData);
+    }
+
 
     public void remove(int position) {
         mItems.remove(position);

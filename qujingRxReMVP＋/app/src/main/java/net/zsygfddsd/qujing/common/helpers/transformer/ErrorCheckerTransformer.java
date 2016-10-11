@@ -1,8 +1,8 @@
-package net.zsygfddsd.qujing.components.httpLoader.transformer;
+package net.zsygfddsd.qujing.common.helpers.transformer;
 
 import android.content.Context;
 
-import net.zsygfddsd.qujing.bean.ComRespInfo;
+import net.zsygfddsd.qujing.data.bean.ComRespInfo;
 
 import rx.Observable;
 import rx.functions.Func1;

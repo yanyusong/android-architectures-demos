@@ -1,6 +1,6 @@
 package net.zsygfddsd.qujing.data.http;
 
-import net.zsygfddsd.qujing.data.bean.ComRespInfo;
+import net.zsygfddsd.qujing.data.bean.RepInfo;
 import net.zsygfddsd.qujing.data.bean.Welfare;
 
 import java.util.List;
@@ -15,6 +15,6 @@ import rx.Observable;
 public interface WelfareService {
 
     @GET("data/{type}/{pageSize}/{page}")
-    Observable<ComRespInfo<List<Welfare>>> getWelfareList(@Path("type") String type, @Path("pageSize") String pageSize, @Path("page") String page);
+    Observable<RepInfo<List<Welfare>>> getWelfareList(@Path("type") String type, @Path("pageSize") String pageSize, @Path("page") String page);
 
 }

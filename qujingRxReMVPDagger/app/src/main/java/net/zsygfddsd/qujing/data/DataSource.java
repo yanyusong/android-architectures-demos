@@ -1,6 +1,6 @@
 package net.zsygfddsd.qujing.data;
 
-import net.zsygfddsd.qujing.data.bean.ComRespInfo;
+import net.zsygfddsd.qujing.base.common.ComRespInfo;
 import net.zsygfddsd.qujing.data.bean.Welfare;
 
 import java.util.List;

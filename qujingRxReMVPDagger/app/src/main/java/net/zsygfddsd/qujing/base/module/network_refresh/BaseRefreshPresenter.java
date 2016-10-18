@@ -3,10 +3,10 @@ package net.zsygfddsd.qujing.base.module.network_refresh;
 
 import android.content.Context;
 
+import net.zsygfddsd.qujing.base.common.ComRespInfo;
 import net.zsygfddsd.qujing.base.module.network.BaseNetPresenter;
-import net.zsygfddsd.qujing.data.bean.ComRespInfo;
 import net.zsygfddsd.qujing.common.helpers.http.ObservableFactory;
-import net.zsygfddsd.qujing.common.helpers.http.Subscriber.NetCheckerSubscriber;
+import net.zsygfddsd.qujing.common.helpers.http.Subscriber.NetAndErrorCheckerSubscriber;
 
 import rx.Observable;
 
@@ -32,8 +32,8 @@ public abstract class BaseRefreshPresenter<DATA> extends BaseNetPresenter implem
         super.start();
     }
 
-    public NetCheckerSubscriber getDefaultSubscriber() {
-        return new NetCheckerSubscriber<DATA>(context, mView) {
+    public NetAndErrorCheckerSubscriber getDefaultSubscriber() {
+        return new NetAndErrorCheckerSubscriber<DATA>(context, mView) {
 
             @Override
             public void onCompleted() {
@@ -49,7 +49,7 @@ public abstract class BaseRefreshPresenter<DATA> extends BaseNetPresenter implem
             @Override
             public void onNext(ComRespInfo<DATA> dataComRespInfo) {
                 super.onNext(dataComRespInfo);
-                if (!dataComRespInfo.isError()) {
+                if (dataComRespInfo.getResult()) {
                     mView.onBindViewData(dataComRespInfo);
                 } else {
                     mView.showToast("刷新失败!");
@@ -61,7 +61,7 @@ public abstract class BaseRefreshPresenter<DATA> extends BaseNetPresenter implem
     public abstract Observable<ComRespInfo<DATA>> getRequestObservable();
 
     public void loadData(Observable<ComRespInfo<DATA>> observable) {
-        NetCheckerSubscriber subscriber = getDefaultSubscriber();
+        NetAndErrorCheckerSubscriber subscriber = getDefaultSubscriber();
         ObservableFactory.createNetObservable(context, observable, mView.getRxView())
                 .subscribe(subscriber);
     }

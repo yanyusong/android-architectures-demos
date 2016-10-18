@@ -1,6 +1,7 @@
 package net.zsygfddsd.qujing.common.helpers.http.transformer;
 
-import net.zsygfddsd.qujing.data.bean.ComRespInfo;
+
+import net.zsygfddsd.qujing.base.common.ComRespInfo;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;

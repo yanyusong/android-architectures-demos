@@ -2,9 +2,9 @@ package net.zsygfddsd.qujing.modules.welfarelist;
 
 import android.content.Context;
 
+import net.zsygfddsd.qujing.base.common.ComRespInfo;
 import net.zsygfddsd.qujing.base.module.network_recyclerview.BasePagePresenter;
 import net.zsygfddsd.qujing.data.DataSource;
-import net.zsygfddsd.qujing.data.bean.ComRespInfo;
 import net.zsygfddsd.qujing.data.bean.Welfare;
 
 import java.util.List;

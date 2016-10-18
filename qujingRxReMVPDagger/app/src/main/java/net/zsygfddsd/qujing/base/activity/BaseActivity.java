@@ -12,7 +12,7 @@ import android.widget.Toast;
 
 import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 
-import net.zsygfddsd.qujing.QJapplication;
+import net.zsygfddsd.qujing.base.BaseApplication;
 import net.zsygfddsd.qujing.base.module.network.BaseNetContract;
 
 
@@ -27,7 +27,7 @@ public class BaseActivity extends RxAppCompatActivity implements BaseNetContract
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.mContext = this;
-        QJapplication.getInstance().addActivity(this);
+        ((BaseApplication) getApplication()).addActivity(this);
         /**
          * 设置为竖屏
          */
@@ -37,7 +37,7 @@ public class BaseActivity extends RxAppCompatActivity implements BaseNetContract
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        QJapplication.getInstance().removeActivity(this);
+        ((BaseApplication) getApplication()).removeActivity(this);
     }
 
     public void showToast(String content) {
@@ -115,25 +115,4 @@ public class BaseActivity extends RxAppCompatActivity implements BaseNetContract
         //        toLoginDialog.show();
     }
 
-    //    @Override
-    //    public void showRationaleDialog(String message, final PermissionRequest request) {
-    //        new AlertDialog.Builder(this)
-    //                .setPositiveButton("允许", new DialogInterface.OnClickListener() {
-    //                    @Override
-    //                    public void onClick(@NonNull DialogInterface dialog, int which) {
-    //                        request.proceed();
-    //                        dialog.dismiss();
-    //                    }
-    //                })
-    //                .setNegativeButton("拒绝", new DialogInterface.OnClickListener() {
-    //                    @Override
-    //                    public void onClick(@NonNull DialogInterface dialog, int which) {
-    //                        request.cancel();
-    //                        dialog.dismiss();
-    //                    }
-    //                })
-    //                .setCancelable(false)
-    //                .setMessage(message)
-    //                .show();
-    //    }
 }

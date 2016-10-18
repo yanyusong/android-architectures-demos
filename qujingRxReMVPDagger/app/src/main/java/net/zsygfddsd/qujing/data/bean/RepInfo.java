@@ -3,7 +3,7 @@ package net.zsygfddsd.qujing.data.bean;
 /**
  * Created by mac on 16/3/3.
  */
-public class ComRespInfo<T> {
+public class RepInfo<T> {
     private boolean error;
     private T results;
 

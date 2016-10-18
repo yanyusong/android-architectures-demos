@@ -1,23 +1,23 @@
-package net.zsygfddsd.qujing.common.helpers.http.Subscriber;
+package com.zsygfddsd.spacestation.common.helpers.http.Subscriber;
 
 import android.content.Context;
 import android.support.annotation.CallSuper;
 
-import net.zsygfddsd.qujing.base.module.network.BaseNetContract;
-import net.zsygfddsd.qujing.common.utils.DeviceUtils;
-import net.zsygfddsd.qujing.data.bean.ComRespInfo;
+import com.zsygfddsd.spacestation.base.module.network.BaseNetContract;
+import com.zsygfddsd.spacestation.common.utils.DeviceUtils;
+import com.zsygfddsd.spacestation.data.bean.ComRespInfo;
 
 import rx.Subscriber;
 
 /**
  * Created by mac on 16/7/27.
  */
-public abstract class NetCheckerSubscriber<T> extends Subscriber<ComRespInfo<T>> {
+public abstract class NetAndErrorCheckerSubscriber<T> extends Subscriber<ComRespInfo<T>> {
 
     private Context context;
     private BaseNetContract.INetView netView;
 
-    public NetCheckerSubscriber(Context context, BaseNetContract.INetView netView) {
+    public NetAndErrorCheckerSubscriber(Context context, BaseNetContract.INetView netView) {
         this.context = context;
         this.netView = netView;
     }
@@ -36,8 +36,11 @@ public abstract class NetCheckerSubscriber<T> extends Subscriber<ComRespInfo<T>>
     @CallSuper
     @Override
     public void onNext(ComRespInfo<T> tComRespInfo) {
+        // TODO: 2016/10/17 公共errorCode处理
         //        if ((tComRespInfo.getResult() != 1) && tComRespInfo.getResultcode() == 99 || tComRespInfo.getResultcode() == 97) {
         //            netView.showToLoginDialog();
         //        }
     }
+
+
 }

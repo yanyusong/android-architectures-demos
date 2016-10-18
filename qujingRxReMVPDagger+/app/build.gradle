@@ -1,0 +1,73 @@
+apply plugin: 'com.android.application'
+apply plugin: 'com.neenbedankt.android-apt'
+
+android {
+    compileSdkVersion rootProject.ext.android.compileSdkVersion
+    buildToolsVersion rootProject.ext.android.buildToolsVersion
+
+    defaultConfig {
+        applicationId "net.zsygfddsd.qujing"
+        minSdkVersion rootProject.ext.android.minSdkVersion
+        targetSdkVersion rootProject.ext.android.targetSdkVersion
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    sourceSets {
+        main {
+            res.srcDirs = [
+                    'src/main/res/layouts/activity',
+                    'src/main/res/layouts/fragment',
+                    'src/main/res/layouts/view',
+                    'src/main/res/layouts/cell',
+                    'src/main/res/layouts',
+                    'src/main/res'
+            ]
+        }
+    }
+
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    testCompile 'junit:junit:4.12'
+    compile rootProject.ext.dependencies["appcompat-v7"]
+    //dagger 2
+    compile rootProject.ext.dependencies["dagger2"]
+    apt rootProject.ext.dependencies["dagger-compiler"]
+    //butterknife
+    compile rootProject.ext.dependencies["butterknife"]
+    apt rootProject.ext.dependencies["butterknife-compiler"]
+    //recyclerview
+    compile rootProject.ext.dependencies["recyclerview-v7"]
+    //picasso
+    compile rootProject.ext.dependencies["picasso"]
+    //Rx
+    compile rootProject.ext.dependencies["retrofit2"]
+    compile rootProject.ext.dependencies["retrofit2-converter-gson"]
+    compile rootProject.ext.dependencies["rxandroid"]
+    compile rootProject.ext.dependencies["retrofit2-adapter-rxjava"]
+    compile rootProject.ext.dependencies["rxlifecycle"]
+    compile rootProject.ext.dependencies["rxlifecycle-components"]
+    compile rootProject.ext.dependencies["okhttp3-logging-interceptor"]
+    //eventbus
+    compile rootProject.ext.dependencies["eventbus3"]
+    //permissionsDispatcher
+    compile rootProject.ext.dependencies["permissionsdispatcher"]
+    apt rootProject.ext.dependencies["permissionsdispatcher-processor"]
+    //leakcanary
+    debugCompile rootProject.ext.dependencies["leakcanary"]
+    releaseCompile rootProject.ext.dependencies["leakcanary-no-op"]
+    testCompile rootProject.ext.dependencies["leakcanary-no-op"]
+    //Bugly
+    //    compile 'com.tencent.bugly:crashreport:2.2.2'
+    //    compile 'com.tencent.bugly:nativecrashreport:3.0'
+    //    compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha8'
+    compile project(':spacestation')
+}

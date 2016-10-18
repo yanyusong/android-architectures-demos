@@ -1,9 +1,9 @@
 package net.zsygfddsd.qujing.base.module.network_refresh;
 
 
+import net.zsygfddsd.qujing.base.common.ComRespInfo;
 import net.zsygfddsd.qujing.base.module.base.BaseContract;
 import net.zsygfddsd.qujing.base.module.network.BaseNetContract;
-import net.zsygfddsd.qujing.data.bean.ComRespInfo;
 
 /**
  * Created by mac on 16/6/11.

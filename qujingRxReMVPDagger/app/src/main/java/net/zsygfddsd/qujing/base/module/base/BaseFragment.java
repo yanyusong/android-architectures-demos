@@ -45,24 +45,4 @@ public class BaseFragment<T extends BaseContract.IBasePresenter> extends RxFragm
         return this;
     }
 
-//    @Override
-//    public void showRationaleDialog(String message, final PermissionRequest request) {
-//        new AlertDialog.Builder(ct)
-//                .setPositiveButton("允许", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(@NonNull DialogInterface dialog, int which) {
-//                        request.proceed();
-//                    }
-//                })
-//                .setNegativeButton("拒绝", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(@NonNull DialogInterface dialog, int which) {
-//                        request.cancel();
-//                    }
-//                })
-//                .setCancelable(false)
-//                .setMessage(message)
-//                .show();
-//    }
-
 }

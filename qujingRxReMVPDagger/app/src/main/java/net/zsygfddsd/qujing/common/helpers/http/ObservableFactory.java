@@ -5,9 +5,8 @@ import android.content.Context;
 import com.trello.rxlifecycle.FragmentEvent;
 import com.trello.rxlifecycle.components.support.RxFragment;
 
-import net.zsygfddsd.qujing.common.helpers.http.transformer.ErrorCheckerTransformer;
+import net.zsygfddsd.qujing.base.common.ComRespInfo;
 import net.zsygfddsd.qujing.common.helpers.http.transformer.SchedulerTransformer;
-import net.zsygfddsd.qujing.data.bean.ComRespInfo;
 
 import rx.Observable;
 
@@ -19,7 +18,7 @@ public class ObservableFactory {
 
     public static <T> Observable<ComRespInfo<T>> createNetObservable(Context context, Observable<ComRespInfo<T>> observable, RxFragment rxFragment) {
 
-        return observable.compose(new ErrorCheckerTransformer<T>(context))
+        return observable
                 .compose(new SchedulerTransformer<T>())
                 .compose(rxFragment.<ComRespInfo<T>>bindUntilEvent(FragmentEvent.DESTROY));
     }

@@ -4,10 +4,10 @@ package net.zsygfddsd.qujing.base.module.network_recyclerview;
 import android.content.Context;
 
 import net.zsygfddsd.qujing.base.adapter.multirecycler.ItemEntityList;
+import net.zsygfddsd.qujing.base.common.ComRespInfo;
 import net.zsygfddsd.qujing.base.module.network.BaseNetPresenter;
-import net.zsygfddsd.qujing.data.bean.ComRespInfo;
 import net.zsygfddsd.qujing.common.helpers.http.ObservableFactory;
-import net.zsygfddsd.qujing.common.helpers.http.Subscriber.NetCheckerSubscriber;
+import net.zsygfddsd.qujing.common.helpers.http.Subscriber.NetAndErrorCheckerSubscriber;
 import net.zsygfddsd.qujing.common.helpers.http.transformer.EmitBeforeAndAfterTransformer;
 
 import java.util.ArrayList;
@@ -46,8 +46,8 @@ public abstract class BasePagePresenter<DATA, D> extends BaseNetPresenter implem
         defaultLoadingShowConfig = getDefaultLoadingShowConfig();
     }
 
-    public NetCheckerSubscriber getDefaultSubscriber() {
-        return new NetCheckerSubscriber<DATA>(context, mView) {
+    public NetAndErrorCheckerSubscriber getDefaultSubscriber() {
+        return new NetAndErrorCheckerSubscriber<DATA>(context, mView) {
 
             @Override
             public void onCompleted() {
@@ -63,12 +63,12 @@ public abstract class BasePagePresenter<DATA, D> extends BaseNetPresenter implem
             @Override
             public void onNext(ComRespInfo<DATA> dataComRespInfo) {
                 super.onNext(dataComRespInfo);
-                if (!dataComRespInfo.isError()) {
+                if (dataComRespInfo.getResult()) {
                     ItemEntityList itemEntityList = mView.getItemEntityList();
-                    boolean hasnext = getIsHasNextFromResponse(dataComRespInfo.getResults());
+                    boolean hasnext = getIsHasNextFromResponse(dataComRespInfo.getData());
                     mView.setHasNextPage(hasnext);
                     items.clear();
-                    items = getListFromResponse(dataComRespInfo.getResults());
+                    items = getListFromResponse(dataComRespInfo.getData());
 
                     if (isClear) {
                         itemEntityList.clearItemDatas();
@@ -110,7 +110,7 @@ public abstract class BasePagePresenter<DATA, D> extends BaseNetPresenter implem
     public abstract Observable<ComRespInfo<DATA>> getRequestObservable(int page, int pageSize);
 
     public void loadData(Observable<ComRespInfo<DATA>> observable, boolean canShowLoading, boolean canLoadCelable) {
-        NetCheckerSubscriber subscriber = getDefaultSubscriber();
+        NetAndErrorCheckerSubscriber subscriber = getDefaultSubscriber();
         ObservableFactory.createNetObservable(context, observable, mView.getRxView())
                 .compose(new EmitBeforeAndAfterTransformer<DATA>(mView, subscriber, canShowLoading, canLoadCelable))
                 .subscribe(subscriber);
